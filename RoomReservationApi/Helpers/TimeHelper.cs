@@ -11,7 +11,7 @@ namespace RoomReservationApi.Helpers
         private static bool hasCache = false;
         private static DateTimeOffset cacheValue;
 
-        public static DateTimeOffset GetCachedSwedenTime()
+        public static DateTimeOffset GetCachedSwedenTime(bool noCache = false)
         {
             if (!hasCache)
             {
@@ -20,7 +20,9 @@ namespace RoomReservationApi.Helpers
                 TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
 
                 cacheValue = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, tzi);
-                hasCache = true;
+
+                if (!noCache)
+                    hasCache = true;
             }
 
             return cacheValue;
