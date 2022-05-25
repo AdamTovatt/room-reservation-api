@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RoomReservationApi.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace RoomReservationApi.Models
         public List<string> Staffs { get; set; }
 
         [JsonIgnore]
-        public bool IsNow { get { return DateTime.Now > Start && DateTime.Now < End; } }
+        public bool IsNow { get { return CacluateIsNow(); } }
 
         [JsonIgnore]
         public int Duration {get { return (int)(End - Start).TotalMinutes; } }
@@ -42,6 +43,13 @@ namespace RoomReservationApi.Models
                     Staffs.Add(staff.FullName);
                 }
             }
+        }
+
+        private bool CacluateIsNow()
+        {
+            DateTimeOffset currentTime = TimeHelper.GetCachedSwedenTime();
+
+            return Start < currentTime && End > currentTime;
         }
     }
 }

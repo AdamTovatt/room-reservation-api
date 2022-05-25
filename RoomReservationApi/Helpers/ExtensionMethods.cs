@@ -20,6 +20,8 @@ namespace RoomReservationApi.Helpers
                 building.OrderRooms();
             }
 
+            TimeHelper.ClearCachedTime(); //the time in sweden is cached so it won't have to be calculated every comparison, now we will clear the cache
+
             return buildings;
         }
     }
