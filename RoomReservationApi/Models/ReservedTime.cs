@@ -15,6 +15,9 @@ namespace RoomReservationApi.Models
         public List<string> Staffs { get; set; }
 
         [JsonIgnore]
+        public bool IsNow { get { return DateTime.Now > Start && DateTime.Now < End; } }
+
+        [JsonIgnore]
         public int Duration {get { return (int)(End - Start).TotalMinutes; } }
 
         public ReservedTime(DateTime start, DateTime end)

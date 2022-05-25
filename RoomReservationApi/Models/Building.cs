@@ -44,5 +44,10 @@ namespace RoomReservationApi.Models
 
             return relevance;
         }
+
+        public void OrderRooms()
+        {
+            Rooms = Rooms.OrderByDescending(x => x.IsAvailable).ToList();
+        }
     }
 }

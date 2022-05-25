@@ -1,4 +1,5 @@
-﻿using RoomReservationApi.Models;
+﻿using RoomReservationApi.Helpers;
+using RoomReservationApi.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -97,7 +98,7 @@ namespace RoomReservationApi.Managers
                 result[buildingName].AddRoom(Rooms[key]);
             }
 
-            return result.Values.OrderByDescending(x => x.Relevance).ToList();
+            return result.Values.OrderByDescending(x => x.Relevance).ToList().OrderBuildingRooms();
         }
 
         private string GetBuildingNameFromRoomName(string roomName)
