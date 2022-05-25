@@ -79,5 +79,43 @@ namespace RoomReservationApi.Managers
 
             return null;
         }
+
+        public List<Building> GetBuildings()
+        {
+            Dictionary<string, Building> result = new Dictionary<string, Building>();
+
+            foreach(string key in Rooms.Keys)
+            {
+                string buildingName = GetBuildingNameFromRoomName(key);
+
+                if (string.IsNullOrEmpty(buildingName))
+                    continue;
+
+                if (!result.ContainsKey(buildingName))
+                    result.Add(buildingName, new Building(buildingName));
+
+                result[buildingName].AddRoom(Rooms[key]);
+            }
+
+            return result.Values.OrderByDescending(x => x.Relevance).ToList();
+        }
+
+        private string GetBuildingNameFromRoomName(string roomName)
+        {
+            if (string.IsNullOrEmpty(roomName))
+                return roomName;
+
+            string firstPart = roomName.Split()[0];
+
+            int stopIndex = 0;
+            for (int i = 0; i < firstPart.Length; i++)
+            {
+                stopIndex = i;
+                if (!char.IsLetter(firstPart[i]))
+                    break;
+            }
+
+            return firstPart.Substring(0, stopIndex);
+        }
     }
 }

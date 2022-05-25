@@ -23,7 +23,7 @@ namespace RoomReservationApi.Controllers
             RoomManager roomManager = new RoomManager(schedule);
             roomManager.ApplySchedule(schedule);
 
-            return new ApiResponse(roomManager.Rooms.Values);
+            return new ApiResponse(roomManager.GetBuildings());
         }
 
         [HttpGet("searchStaff")]

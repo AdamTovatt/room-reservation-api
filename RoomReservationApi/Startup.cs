@@ -29,7 +29,7 @@ namespace RoomReservationApi
         {
             services.AddCors();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             
             //services.AddSwaggerGen(c =>
             //{

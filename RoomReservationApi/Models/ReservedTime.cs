@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace RoomReservationApi.Models
         public string Department { get; set; }
         public List<string> Staffs { get; set; }
 
+        [JsonIgnore]
         public int Duration {get { return (int)(End - Start).TotalMinutes; } }
 
         public ReservedTime(DateTime start, DateTime end)
