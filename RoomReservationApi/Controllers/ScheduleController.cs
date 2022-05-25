@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using RoomReservationApi.Helpers;
 using RoomReservationApi.Managers;
 using RoomReservationApi.Models;
