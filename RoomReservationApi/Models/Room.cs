@@ -10,7 +10,8 @@ namespace RoomReservationApi.Models
         public string Name { get; set; }
         public List<ReservedTime> ReservedTimes { get; set; }
 
-        public bool IsAvailable { get { if (ReservedTimes == null || ReservedTimes.Count == 0) return true; return !ReservedTimes.Any(x => x.IsNow); } }
+        //will calculate this in front end for now
+        //public bool IsAvailable { get { if (ReservedTimes == null || ReservedTimes.Count == 0) return true; return !ReservedTimes.Any(x => x.IsNow); } }
 
         public Room(string name)
         {

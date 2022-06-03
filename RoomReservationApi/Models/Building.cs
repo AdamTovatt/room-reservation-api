@@ -47,7 +47,7 @@ namespace RoomReservationApi.Models
 
         public void OrderRooms()
         {
-            Rooms = Rooms.OrderByDescending(x => x.IsAvailable).ToList();
+            Rooms = Rooms.OrderByDescending(x => x.Name).ToList();
         }
     }
 }
