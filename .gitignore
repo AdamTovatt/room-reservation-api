@@ -12,6 +12,8 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+RoomReservationApi/Properties/launchSettings.json
+
 # Build results
 RoomReservationApi/[Dd]ebug/
 RoomReservationApi/[Dd]ebugPublic/
@@ -234,3 +236,5 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+/RoomReservationApi/Properties/launchSettings.json
+RoomReservationApi/Properties/launchSettings.json
