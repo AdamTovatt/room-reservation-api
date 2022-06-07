@@ -31,7 +31,7 @@ namespace RoomReservationApi.Managers
 
             try
             {
-                string query = @"SELECT ""Name"", ""PositionX"", ""PositionY"" FROM ""Building""";
+                string query = @"SELECT ""Name"", ""Latitude"", ""Longitude"" FROM ""Building""";
 
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
@@ -42,12 +42,11 @@ namespace RoomReservationApi.Managers
                     {
                         while (await reader.ReadAsync())
                         {
-                            double? x = reader["PositionX"] as double?;
-                            double? y = reader["PositionY"] as double?;
 
-                            BuildingMetadata metadata = new BuildingMetadata();
-                            if (x != null && y != null)
-                                metadata.Position = new Vector2((double)x, (double)y);
+                            BuildingMetadata metadata = new BuildingMetadata()
+                            {
+                                Position = new Coordinate((double)reader["Latitude"], (double)reader["Longitude"])
+                            };
 
                             result.Add(reader["Name"] as string, metadata);
                         }

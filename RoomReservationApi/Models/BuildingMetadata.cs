@@ -7,6 +7,6 @@ namespace RoomReservationApi.Models
 {
     public class BuildingMetadata
     {
-        public Vector2 Position { get; set; }
+        public Coordinate Position { get; set; }
     }
 }

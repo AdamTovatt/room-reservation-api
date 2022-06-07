@@ -14,7 +14,7 @@ namespace RoomReservationApi.Models
         public List<Room> Rooms { get; set; }
 
         [JsonIgnore]
-        public float Relevance { get { return CalculateRelevance(); } }
+        public BuildingMetadata Metadata { get; set; }
 
         public Building(string name)
         {
@@ -27,20 +27,15 @@ namespace RoomReservationApi.Models
             Rooms.Add(room);
         }
 
-        private float CalculateRelevance()
+        public double GetRelevance(Coordinate coordinate = null)
         {
-            float relevance = Rooms.Count();
+            if (coordinate == null)
+                coordinate = new Coordinate(59.34691090376268, 18.072202439834772); //coordinates for KTH Entré
 
-            if(!string.IsNullOrEmpty(Name))
-            {
-                if(relevantRooms.Contains(Name[0].ToString()))
-                {
-                    if(Name.Length < 6)
-                    {
-                        relevance += 100;
-                    }
-                }
-            }
+            double relevance = 0;
+
+            if (Metadata != null && Metadata.Position != null)
+                relevance = double.MaxValue - Metadata.Position.GeographicalDistanceTo(coordinate);
 
             return relevance;
         }

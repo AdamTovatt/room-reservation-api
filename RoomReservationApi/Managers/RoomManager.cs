@@ -101,7 +101,15 @@ namespace RoomReservationApi.Managers
             DatabaseManager database = DatabaseManager.CreateFromEnvironmentVariables();
             Dictionary<string, BuildingMetadata> metadata = await database.GetBuildingMetadata();
 
-            return result.Values.OrderByDescending(x => x.Relevance).ToList().OrderBuildingRooms();
+            foreach(string key in result.Keys)
+            {
+                if(metadata.ContainsKey(key))
+                {
+                    result[key].Metadata = metadata[key];
+                }
+            }
+
+            return result.Values.OrderByDescending(x => x.GetRelevance()).ToList().OrderBuildingRooms();
         }
 
         private string GetBuildingNameFromRoomName(string roomName)
