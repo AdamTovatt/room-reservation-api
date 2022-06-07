@@ -1,0 +1,6 @@
+﻿CREATE TABLE "Building" (
+"Id" BIGSERIAL PRIMARY KEY,
+"Name" VARCHAR(100) UNIQUE NOT NULL,
+"PositionX" double precision,
+"PositionY" double precision
+);

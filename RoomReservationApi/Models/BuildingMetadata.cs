@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RoomReservationApi.Models
 {
-    public class RoomMetadata
+    public class BuildingMetadata
     {
         public Vector2 Position { get; set; }
     }

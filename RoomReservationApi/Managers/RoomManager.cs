@@ -81,7 +81,7 @@ namespace RoomReservationApi.Managers
             return null;
         }
 
-        public List<Building> GetBuildings()
+        public async Task<List<Building>> GetBuildingsAsync()
         {
             Dictionary<string, Building> result = new Dictionary<string, Building>();
 
@@ -97,6 +97,9 @@ namespace RoomReservationApi.Managers
 
                 result[buildingName].AddRoom(Rooms[key]);
             }
+
+            DatabaseManager database = DatabaseManager.CreateFromEnvironmentVariables();
+            Dictionary<string, BuildingMetadata> metadata = await database.GetBuildingMetadata();
 
             return result.Values.OrderByDescending(x => x.Relevance).ToList().OrderBuildingRooms();
         }
