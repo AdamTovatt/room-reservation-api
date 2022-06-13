@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using GeoCoordinatePortable;
+using Npgsql;
 using RoomReservationApi.Helpers;
 using RoomReservationApi.Models;
 using Sakur.WebApiUtilities.Models;
@@ -45,7 +46,7 @@ namespace RoomReservationApi.Managers
 
                             BuildingMetadata metadata = new BuildingMetadata()
                             {
-                                Position = new Coordinate((double)reader["Latitude"], (double)reader["Longitude"])
+                                Position = new GeoCoordinate((double)reader["Latitude"], (double)reader["Longitude"])
                             };
 
                             result.Add(reader["Name"] as string, metadata);

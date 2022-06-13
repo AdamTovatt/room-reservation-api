@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using GeoCoordinatePortable;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,15 +28,15 @@ namespace RoomReservationApi.Models
             Rooms.Add(room);
         }
 
-        public double GetRelevance(Coordinate coordinate = null)
+        public double GetRelevance(GeoCoordinate coordinate = null)
         {
             if (coordinate == null)
-                coordinate = new Coordinate(59.34691090376268, 18.072202439834772); //coordinates for KTH Entré
+                coordinate = new GeoCoordinate(59.34691090376268, 18.072202439834772); //coordinates for KTH Entré
 
-            double relevance = 0;
+            double relevance = double.MinValue;
 
             if (Metadata != null && Metadata.Position != null)
-                relevance = double.MaxValue - Metadata.Position.GeographicalDistanceTo(coordinate);
+                relevance = -Metadata.Position.GetDistanceTo(coordinate);
 
             return relevance;
         }
