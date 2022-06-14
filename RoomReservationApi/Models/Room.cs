@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using RoomReservationApi.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,18 +12,29 @@ namespace RoomReservationApi.Models
         public string Name { get; set; }
         public List<ReservedTime> ReservedTimes { get; set; }
 
-        //will calculate this in front end for now
-        //public bool IsAvailable { get { if (ReservedTimes == null || ReservedTimes.Count == 0) return true; return !ReservedTimes.Any(x => x.IsNow); } }
+        [JsonIgnore]
+        public Building Building { get; set; }
 
-        public Room(string name)
+        [JsonIgnore]
+        public string BuildingName { get { if (!string.IsNullOrEmpty(buildingName)) return buildingName; return Name.ExtractBuildingName(); } }
+
+        private string buildingName;
+
+        public Room(string name, string buildingName)
         {
             Name = name;
+            this.buildingName = buildingName;
             ReservedTimes = new List<ReservedTime>();
         }
 
         public void AddReservedTime(ReservedTime time)
         {
             ReservedTimes.Add(time);
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

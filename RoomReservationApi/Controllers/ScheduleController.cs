@@ -20,12 +20,14 @@ namespace RoomReservationApi.Controllers
         {
             Schedule schedule = await ApiHelper.GetScheduleAsync(dayOffset);
 
-            RoomManager roomManager = new RoomManager(schedule);
+            RoomManager roomManager = new RoomManager();
+            await roomManager.InitializeAsync();
             roomManager.ApplySchedule(schedule);
 
-            return new ApiResponse(new { buildings = await roomManager.GetBuildingsAsync() });
+            return new ApiResponse(new { buildings = roomManager.Buildings });
         }
 
+        /*
         [HttpGet("searchStaff")]
         public async Task<ActionResult> SearchStaff(string name, int dayRange)
         {
@@ -45,5 +47,6 @@ namespace RoomReservationApi.Controllers
 
             return new ApiResponse(searchResult);
         }
+        */
     }
 }

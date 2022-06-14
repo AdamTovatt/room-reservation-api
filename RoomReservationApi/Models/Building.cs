@@ -24,6 +24,7 @@ namespace RoomReservationApi.Models
 
         public void AddRoom(Room room)
         {
+            room.Building = this;
             Rooms.Add(room);
         }
 
@@ -49,6 +50,11 @@ namespace RoomReservationApi.Models
         public void OrderRooms()
         {
             Rooms = Rooms.OrderByDescending(x => x.Name).ToList();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} - {1} rooms", Name, Rooms.Count);
         }
     }
 }

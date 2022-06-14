@@ -13,125 +13,81 @@ namespace RoomReservationApi.Managers
     public class RoomManager
     {
         public Dictionary<string, Room> Rooms { get; set; }
+        public Dictionary<string, Building> BuildingsDictionary { get; set; }
+        public List<Building> Buildings { get { return BuildingsDictionary.Values.ToList().OrderByDescending(x => x.GetRelevance()).ToList().OrderBuildingRooms(); } }
         public GeoCoordinate Location { get; private set; }
 
-        public RoomManager(Schedule schedule = null, GeoCoordinate location = null)
+        private Dictionary<string, string> roomBuildings = new Dictionary<string, string>();
+
+        public RoomManager(GeoCoordinate location = null)
         {
             Location = location;
-            Rooms = new Dictionary<string, Room>();
+        }
 
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("RoomReservationApi.rooms.csv"))
-            using (var reader = new StreamReader(stream))
+        public async Task InitializeAsync(DatabaseManager database = null)
+        {
+            if (database == null)
+                database = DatabaseManager.CreateFromEnvironmentVariables();
+
+            BuildingsDictionary = await database.GetBuildingsAsync();
+
+            foreach (string key in BuildingsDictionary.Keys)
             {
-                string csv = reader.ReadToEnd();
-
-                foreach(string line in csv.Split("\n"))
-                {
-                    string[] lineParts = line.Split("\t");
-                    if (lineParts.Length > 0)
-                    {
-                        string roomName = lineParts[0].Trim();
-                        if (!Rooms.ContainsKey(roomName))
-                        {
-                            Rooms.Add(roomName, new Room(roomName));
-                        }
-                    }
-                }
+                BuildingsDictionary[key].UpdateDistance(Location);
             }
 
-            if (schedule != null)
+            foreach (Room room in await database.GetRoomsAsync())
             {
-                foreach (Reservation reservation in schedule.Reservations)
-                {
-                    foreach (Location _location in reservation.Locations)
-                    {
-                        if (!Rooms.ContainsKey(_location.Name))
-                        {
-                            Rooms.Add(_location.Name, new Room(_location.Name));
-                        }
-                    }
-                }
+                AddRoom(room);
             }
+        }
+
+        private void AddRoom(Room room)
+        {
+            string buildingName = room.BuildingName;
+
+            if (!BuildingsDictionary.ContainsKey(buildingName))
+                BuildingsDictionary.Add(buildingName, new Building(buildingName));
+
+            BuildingsDictionary[buildingName].AddRoom(room);
+
+            if (!roomBuildings.ContainsKey(room.Name))
+                roomBuildings.Add(room.Name, buildingName);
         }
 
         public void ApplySchedule(Schedule schedule)
         {
-            foreach(Reservation reservation in schedule.Reservations)
+            foreach (Reservation reservation in schedule.Reservations)
             {
-                foreach(Location location in reservation.Locations)
+                foreach (Location location in reservation.Locations)
                 {
-                    if(Rooms.ContainsKey(location.Name))
+                    string buildingName;
+
+                    if (roomBuildings.ContainsKey(location.Name))
+                        buildingName = roomBuildings[location.Name];
+                    else
+                        buildingName = location.Name.ExtractBuildingName();
+
+                    if (!BuildingsDictionary.ContainsKey(buildingName))
+                        BuildingsDictionary.Add(buildingName, new Building(buildingName));
+
+                    Building building = BuildingsDictionary[buildingName];
+
+                    Room room = building.Rooms.Where(x => x.Name == location.Name).FirstOrDefault();
+
+                    if (room != null)
                     {
-                        Rooms[location.Name].AddReservedTime(new ReservedTime(reservation));
+                        room.AddReservedTime(new ReservedTime(reservation));
+                    }
+                    else
+                    {
+                        room = new Room(location.Name, buildingName);
+                        room.AddReservedTime(new ReservedTime(reservation));
+
+                        building.AddRoom(room);
                     }
                 }
             }
-        }
-
-        public Room SearchStaff(string name)
-        {
-            foreach (Room room in Rooms.Values)
-            {
-                foreach (ReservedTime time in room.ReservedTimes)
-                {
-                    if (time.Staffs.Contains(name))
-                    {
-                        return room;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        public async Task<List<Building>> GetBuildingsAsync()
-        {
-            Dictionary<string, Building> result = new Dictionary<string, Building>();
-
-            foreach(string key in Rooms.Keys)
-            {
-                string buildingName = GetBuildingNameFromRoomName(key);
-
-                if (string.IsNullOrEmpty(buildingName))
-                    continue;
-
-                if (!result.ContainsKey(buildingName))
-                    result.Add(buildingName, new Building(buildingName));
-
-                result[buildingName].AddRoom(Rooms[key]);
-            }
-
-            DatabaseManager database = DatabaseManager.CreateFromEnvironmentVariables();
-            Dictionary<string, BuildingMetadata> metadata = await database.GetBuildingMetadata();
-
-            foreach(string key in result.Keys)
-            {
-                if(metadata.ContainsKey(key))
-                {
-                    result[key].Metadata = metadata[key];
-                    result[key].UpdateDistance(Location);
-                }
-            }
-
-            return result.Values.OrderByDescending(x => x.GetRelevance()).ToList().OrderBuildingRooms();
-        }
-
-        private string GetBuildingNameFromRoomName(string roomName)
-        {
-            if (string.IsNullOrEmpty(roomName))
-                return roomName;
-
-            string firstPart = roomName.Split()[0];
-
-            int stopIndex = 0;
-            for (int i = 0; i < firstPart.Length; i++)
-            {
-                stopIndex = i;
-                if (!char.IsLetter(firstPart[i]))
-                    break;
-            }
-
-            return firstPart.Substring(0, stopIndex);
         }
     }
 }
