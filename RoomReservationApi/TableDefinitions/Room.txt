@@ -1,8 +1,21 @@
-﻿CREATE TABLE "Room" (
-"Id" BIGSERIAL PRIMARY KEY,
-"Name" VARCHAR(100) UNIQUE NOT NULL,
-"BuildingId" BIGINT NOT NULL REFERENCES "Building" ("Id")
+﻿-- public."Room" definition
+
+-- Drop table
+
+-- DROP TABLE public."Room";
+
+CREATE TABLE public."Room" (
+	"Id" bigserial NOT NULL,
+	"Name" varchar(100) NOT NULL,
+	"BuildingId" int8 NOT NULL,
+	CONSTRAINT "Room_Name_key" UNIQUE ("Name"),
+	CONSTRAINT "Room_pkey" PRIMARY KEY ("Id")
 );
+
+
+-- public."Room" foreign keys
+
+ALTER TABLE public."Room" ADD CONSTRAINT "Room_BuildingId_fkey" FOREIGN KEY ("BuildingId") REFERENCES public."Building"("Id");
 
 -------------------
 
