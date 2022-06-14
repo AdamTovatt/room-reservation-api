@@ -1,4 +1,5 @@
-﻿using RoomReservationApi.Helpers;
+﻿using GeoCoordinatePortable;
+using RoomReservationApi.Helpers;
 using RoomReservationApi.Models;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,11 @@ namespace RoomReservationApi.Managers
     public class RoomManager
     {
         public Dictionary<string, Room> Rooms { get; set; }
+        public GeoCoordinate Location { get; private set; }
 
-        public RoomManager(Schedule schedule = null)
+        public RoomManager(Schedule schedule = null, GeoCoordinate location = null)
         {
+            Location = location;
             Rooms = new Dictionary<string, Room>();
 
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("RoomReservationApi.rooms.csv"))
@@ -40,11 +43,11 @@ namespace RoomReservationApi.Managers
             {
                 foreach (Reservation reservation in schedule.Reservations)
                 {
-                    foreach (Location location in reservation.Locations)
+                    foreach (Location _location in reservation.Locations)
                     {
-                        if (!Rooms.ContainsKey(location.Name))
+                        if (!Rooms.ContainsKey(_location.Name))
                         {
-                            Rooms.Add(location.Name, new Room(location.Name));
+                            Rooms.Add(_location.Name, new Room(_location.Name));
                         }
                     }
                 }
@@ -106,6 +109,7 @@ namespace RoomReservationApi.Managers
                 if(metadata.ContainsKey(key))
                 {
                     result[key].Metadata = metadata[key];
+                    result[key].UpdateDistance(Location);
                 }
             }
 
