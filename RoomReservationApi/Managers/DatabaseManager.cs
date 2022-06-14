@@ -70,7 +70,7 @@ namespace RoomReservationApi.Managers
 
             try
             {
-                string query = @"SELECT r.""Name"" ""RoomName"", b.""Name"" ""BuildingName"" FROM ""Room"" r JOIN ""Building"" b ON r.""BuildingId"" = b.""Id""";
+                string query = @"SELECT r.""Name"" ""RoomName"", b.""Name"" ""BuildingName"", r.""Hide"" FROM ""Room"" r JOIN ""Building"" b ON r.""BuildingId"" = b.""Id""";
 
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
@@ -81,7 +81,7 @@ namespace RoomReservationApi.Managers
                     {
                         while (await reader.ReadAsync())
                         {
-                            result.Add(new Room(reader["RoomName"] as string, reader["BuildingName"] as string));
+                            result.Add(new Room(reader["RoomName"] as string, reader["BuildingName"] as string) { Hide = (bool)reader["Hide"] });
                         }
                     }
                 }

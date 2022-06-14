@@ -12,9 +12,8 @@ namespace RoomReservationApi.Managers
 {
     public class RoomManager
     {
-        public Dictionary<string, Room> Rooms { get; set; }
         public Dictionary<string, Building> BuildingsDictionary { get; set; }
-        public List<Building> Buildings { get { return BuildingsDictionary.Values.ToList().OrderByDescending(x => x.GetRelevance()).ToList().OrderBuildingRooms(); } }
+        public List<Building> Buildings { get { return BuildingsDictionary.Values.Where(x => !x.Rooms.All(r => r.Hide)).OrderByDescending(x => x.GetRelevance()).ToList().OrderBuildingRooms(); } }
         public GeoCoordinate Location { get; private set; }
 
         private Dictionary<string, string> roomBuildings = new Dictionary<string, string>();

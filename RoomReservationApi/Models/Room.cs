@@ -10,6 +10,7 @@ namespace RoomReservationApi.Models
     public class Room
     {
         public string Name { get; set; }
+        public bool Hide { get; set; }
         public List<ReservedTime> ReservedTimes { get; set; }
 
         [JsonIgnore]
