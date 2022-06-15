@@ -13,7 +13,10 @@ namespace RoomReservationApi.Models
         public DateTime End { get; private set; }
         public string Description { get; set; }
         public string Department { get; set; }
+        public int OccupiedRooms { get; set; }
+        public string ReservationType { get; set; }
         public List<string> Staffs { get; set; }
+        public List<string> Programmes { get; set; }
 
         [JsonIgnore]
         public bool IsNow { get { return CacluateIsNow(); } }
@@ -43,6 +46,18 @@ namespace RoomReservationApi.Models
                     Staffs.Add(staff.FullName);
                 }
             }
+
+            Programmes = new List<string>();
+            if(reservation.Programmes != null)
+            {
+                foreach(Programme programme in reservation.Programmes)
+                {
+                    Programmes.Add(programme.Code);
+                }
+            }
+
+            OccupiedRooms = reservation.Locations.Count;
+            ReservationType = reservation.Typedesc;
         }
 
         private bool CacluateIsNow()
