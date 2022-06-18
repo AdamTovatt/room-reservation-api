@@ -15,7 +15,7 @@ namespace RoomReservationApi.Models
         public string Department { get; set; }
         public int OccupiedRooms { get; set; }
         public string ReservationType { get; set; }
-        public List<string> Staffs { get; set; }
+        public List<string> Staff { get; set; }
         public List<string> Programmes { get; set; }
 
         [JsonIgnore]
@@ -28,7 +28,7 @@ namespace RoomReservationApi.Models
         {
             Start = start;
             End = end;
-            Staffs = new List<string>();
+            Staff = new List<string>();
         }
 
         public ReservedTime(Reservation reservation)
@@ -38,12 +38,12 @@ namespace RoomReservationApi.Models
             Description = reservation.Description;
             Department = reservation.Department?.Name;
 
-            Staffs = new List<string>();
-            if (reservation.Staffs != null)
+            Staff = new List<string>();
+            if (reservation.Staff != null)
             {
-                foreach (Staff staff in reservation.Staffs)
+                foreach (Staff staff in reservation.Staff)
                 {
-                    Staffs.Add(staff.FullName);
+                    Staff.Add(staff.FullName);
                 }
             }
 
