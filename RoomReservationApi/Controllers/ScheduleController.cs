@@ -24,7 +24,7 @@ namespace RoomReservationApi.Controllers
             await roomManager.InitializeAsync();
             roomManager.ApplySchedule(schedule);
 
-            return new ApiResponse(new { buildings = roomManager.Buildings });
+            return new ApiResponse(new { dayOffset, buildings = roomManager.Buildings });
         }
 
         /*
