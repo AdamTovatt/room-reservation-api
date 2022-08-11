@@ -12,6 +12,7 @@ namespace RoomReservationApi.Managers
 {
     public class RoomManager
     {
+        public bool AllowUnknownBuildings { get; set; }
         public Dictionary<string, Building> BuildingsDictionary { get; set; }
         public List<Building> Buildings { get { return BuildingsDictionary.Values.Where(x => !x.Rooms.All(r => r.Hide)).OrderByDescending(x => x.GetRelevance()).ToList().OrderBuildingRooms(); } }
         public GeoCoordinate Location { get; private set; }
@@ -46,7 +47,12 @@ namespace RoomReservationApi.Managers
             string buildingName = room.BuildingName;
 
             if (!BuildingsDictionary.ContainsKey(buildingName))
-                BuildingsDictionary.Add(buildingName, new Building(buildingName));
+            {
+                if (AllowUnknownBuildings)
+                    BuildingsDictionary.Add(buildingName, new Building(buildingName)); //only add the building if we allow adding unknown buildings
+                else
+                    return;
+            }
 
             BuildingsDictionary[buildingName].AddRoom(room);
 
@@ -68,7 +74,12 @@ namespace RoomReservationApi.Managers
                         buildingName = location.Name.ExtractBuildingName();
 
                     if (!BuildingsDictionary.ContainsKey(buildingName))
-                        BuildingsDictionary.Add(buildingName, new Building(buildingName));
+                    {
+                        if (AllowUnknownBuildings)
+                            BuildingsDictionary.Add(buildingName, new Building(buildingName)); //only add the building if we allow adding unknown buildings
+                        else
+                            continue;
+                    }
 
                     Building building = BuildingsDictionary[buildingName];
 
