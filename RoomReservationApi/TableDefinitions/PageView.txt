@@ -1,0 +1,4 @@
+﻿create table "PageView" (
+"Id" BIGSERIAL PRIMARY KEY,
+"Ip" inet NOT NULL,
+"Time" TIMESTAMP DEFAULT now())
