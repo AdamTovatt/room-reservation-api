@@ -7,6 +7,7 @@ using Sakur.WebApiUtilities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace RoomReservationApi.Controllers
@@ -20,9 +21,15 @@ namespace RoomReservationApi.Controllers
         {
             Schedule schedule = await ApiHelper.GetScheduleAsync(dayOffset);
 
+            DatabaseManager database = DatabaseManager.CreateFromEnvironmentVariables();
+
             RoomManager roomManager = new RoomManager();
-            await roomManager.InitializeAsync();
+            await roomManager.InitializeAsync(database);
             roomManager.ApplySchedule(schedule);
+
+            IPAddress remoteAddress = Request.HttpContext.GetRemoteIPAddress().MapToIPv4();
+
+            await database.RegisterView(remoteAddress);
 
             return new ApiResponse(new { dayOffset, buildings = roomManager.Buildings });
         }

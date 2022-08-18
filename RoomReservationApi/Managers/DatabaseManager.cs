@@ -6,6 +6,7 @@ using Sakur.WebApiUtilities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace RoomReservationApi.Managers
@@ -128,6 +129,31 @@ namespace RoomReservationApi.Managers
             }
 
             return result;
+        }
+
+        public async Task RegisterView(IPAddress ip)
+        {
+            try
+            {
+                string query = @"INSERT INTO ""PageView"" (""Ip"") VALUES (@ip)";
+
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    await connection.OpenAsync();
+
+                    command.Parameters.Add("@ip", NpgsqlTypes.NpgsqlDbType.Inet).Value = ip;
+
+                    if((await command.ExecuteNonQueryAsync()) == 0)
+                    {
+                        throw new ApiException("Write view to database failed", System.Net.HttpStatusCode.InternalServerError);
+                    }
+                }
+            }
+            catch
+            {
+                throw new ApiException("Error when getting room metadata, the database might be unavailable", System.Net.HttpStatusCode.InternalServerError);
+            }
         }
     }
 }
