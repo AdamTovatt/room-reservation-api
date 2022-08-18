@@ -29,7 +29,8 @@ namespace RoomReservationApi.Controllers
 
             IPAddress remoteAddress = Request.HttpContext.GetRemoteIPAddress().MapToIPv4();
 
-            await database.RegisterView(remoteAddress);
+            ViewManager viewManager = new ViewManager(database);
+            await viewManager.RegisterView(remoteAddress);
 
             return new ApiResponse(new { dayOffset, buildings = roomManager.Buildings });
         }
