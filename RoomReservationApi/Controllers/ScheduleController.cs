@@ -19,20 +19,27 @@ namespace RoomReservationApi.Controllers
         [HttpGet("get")]
         public async Task<ActionResult> GetSchedule(int dayOffset)
         {
-            Schedule schedule = await ApiHelper.GetScheduleAsync(dayOffset);
+            try
+            {
+                Schedule schedule = await ApiHelper.GetScheduleAsync(dayOffset);
 
-            DatabaseManager database = DatabaseManager.CreateFromEnvironmentVariables();
+                DatabaseManager database = DatabaseManager.CreateFromEnvironmentVariables();
 
-            RoomManager roomManager = new RoomManager();
-            await roomManager.InitializeAsync(database);
-            roomManager.ApplySchedule(schedule);
+                RoomManager roomManager = new RoomManager();
+                await roomManager.InitializeAsync(database);
+                roomManager.ApplySchedule(schedule);
 
-            IPAddress remoteAddress = Request.HttpContext.GetRemoteIPAddress().MapToIPv4();
+                IPAddress remoteAddress = Request.HttpContext.GetRemoteIPAddress().MapToIPv4();
 
-            //ViewManager viewManager = new ViewManager(database);
-            //await viewManager.RegisterView(remoteAddress);
+                //ViewManager viewManager = new ViewManager(database);
+                //await viewManager.RegisterView(remoteAddress);
 
-            return new ApiResponse(new { dayOffset, buildings = roomManager.Buildings });
+                return new ApiResponse(new { dayOffset, buildings = roomManager.Buildings });
+            }
+            catch(ApiException exception)
+            {
+                return new ApiResponse(exception);
+            }
         }
 
         /*
