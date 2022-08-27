@@ -46,16 +46,16 @@ namespace RoomReservationApi
             });
 
             // Patch path base with forwarded path
-            app.Use(async (context, next) =>
-            {
-                var forwardedPath = context.Request.Headers["X-Forwarded-Path"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(forwardedPath))
-                {
-                    context.Request.PathBase = forwardedPath;
-                }
+            //app.Use(async (context, next) =>
+            //{
+            //    var forwardedPath = context.Request.Headers["X-Forwarded-Path"].FirstOrDefault();
+            //    if (!string.IsNullOrEmpty(forwardedPath))
+            //    {
+            //        context.Request.PathBase = forwardedPath;
+            //    }
 
-                await next();
-            });
+            //    await next();
+            //});
 
             app.UseCors(x => x
                 .AllowAnyOrigin()
