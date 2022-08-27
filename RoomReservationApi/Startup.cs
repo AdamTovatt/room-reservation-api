@@ -30,7 +30,7 @@ namespace RoomReservationApi
             services.AddCors();
 
             services.AddControllers().AddNewtonsoftJson();
-            
+
             //services.AddSwaggerGen(c =>
             //{
             //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "RoomReservationApi", Version = "v1" });
@@ -43,6 +43,18 @@ namespace RoomReservationApi
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
+            // Patch path base with forwarded path
+            app.Use(async (context, next) =>
+            {
+                var forwardedPath = context.Request.Headers["X-Forwarded-Path"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(forwardedPath))
+                {
+                    context.Request.PathBase = forwardedPath;
+                }
+
+                await next();
             });
 
             app.UseCors(x => x
