@@ -65,5 +65,28 @@ namespace RoomReservationApi.Helpers
             }
             return context.Connection.RemoteIpAddress;
         }
+
+        public static List<Room> GetRooms(this List<Building> buildings)
+        {
+            List<Room> rooms = new List<Room>();
+            
+            foreach(Building building in buildings)
+            {
+                rooms.AddRange(building.Rooms);
+            }
+
+            return rooms;
+        }
+
+        public static bool ContainsRoom(this List<Room> rooms, Room room)
+        {
+            foreach(Room r in rooms)
+            {
+                if (room.Name == r.Name)
+                    return true;
+            }
+
+            return false;
+        }
     }
 }

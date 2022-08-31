@@ -85,13 +85,20 @@ namespace RoomReservationApi.Managers
 
                     Room room = building.Rooms.Where(x => x.Name == location.Name).FirstOrDefault();
 
+                    Guid? externalId = null;
+                    if (Guid.TryParse(location.Id, out Guid parsedId))
+                        externalId = parsedId;
+
                     if (room != null)
                     {
+                        if(room.ExternalId == null)
+                            room.ExternalId = externalId;
+                        
                         room.AddReservedTime(new ReservedTime(reservation));
                     }
                     else
                     {
-                        room = new Room(location.Name, buildingName);
+                        room = new Room(location.Name, buildingName, externalId);
                         room.AddReservedTime(new ReservedTime(reservation));
 
                         building.AddRoom(room);

@@ -9,7 +9,7 @@ using RoomReservationApi.Helpers;
 
 namespace RoomReservationApi.Models
 {
-    public partial class Reservation
+    public class Reservation
     {
         [JsonProperty("id")]
         public long Id { get; set; }
@@ -55,14 +55,11 @@ namespace RoomReservationApi.Models
 
         [JsonProperty("offerings")]
         public List<Offering> Offerings { get; set; }
+
+        public static List<Reservation> FromJson(string json) => JsonConvert.DeserializeObject<List<Reservation>>(json, Converter.Settings);
     }
 
     public enum Status { Cancelled, Published };
-
-    public partial class Reservation
-    {
-        public static List<Reservation> FromJson(string json) => JsonConvert.DeserializeObject<List<Reservation>>(json, Converter.Settings);
-    }
 
     public static class Serialize
     {

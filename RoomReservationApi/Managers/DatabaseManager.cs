@@ -71,7 +71,7 @@ namespace RoomReservationApi.Managers
 
             try
             {
-                string query = @"SELECT r.""Name"" ""RoomName"", b.""Name"" ""BuildingName"", r.""Hide"" FROM ""Room"" r JOIN ""Building"" b ON r.""BuildingId"" = b.""Id""";
+                string query = @"SELECT r.""Name"" ""RoomName"", b.""Name"" ""BuildingName"", r.""Hide"", r.""ExternalId"" FROM ""Room"" r JOIN ""Building"" b ON r.""BuildingId"" = b.""Id""";
 
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
@@ -82,7 +82,7 @@ namespace RoomReservationApi.Managers
                     {
                         while (await reader.ReadAsync())
                         {
-                            result.Add(new Room(reader["RoomName"] as string, reader["BuildingName"] as string) { Hide = (bool)reader["Hide"] });
+                            result.Add(new Room(reader["RoomName"] as string, reader["BuildingName"] as string, reader["ExternalId"] as Guid?) { Hide = (bool)reader["Hide"] });
                         }
                     }
                 }
@@ -90,6 +90,42 @@ namespace RoomReservationApi.Managers
             catch
             {
                 throw new ApiException("Error when getting rooms, the database might be unavailable", System.Net.HttpStatusCode.InternalServerError);
+            }
+
+            return result;
+        }
+
+        public async Task<bool> UpdateDatabaseRooms(List<Room> rooms)
+        {
+            bool result = true;
+
+            List<Room> databaseRooms = await GetRoomsAsync();
+            rooms = rooms.Where(x => databaseRooms.ContainsRoom(x)).ToList();
+
+            foreach (Room room in rooms)
+            {
+                if (room.ExternalId == null)
+                    continue;
+
+                try
+                {
+                    string query = @"UPDATE ""Room"" SET ""ExternalId"" = @ExternalId WHERE ""Name"" = @Name";
+
+                    using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                    using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                    {
+                        await connection.OpenAsync();
+
+                        command.Parameters.Add("@ExternalId", NpgsqlTypes.NpgsqlDbType.Uuid).Value = (Guid)room.ExternalId;
+                        command.Parameters.Add("@Name", NpgsqlTypes.NpgsqlDbType.Varchar).Value = room.Name;
+
+                        result = result && (await command.ExecuteNonQueryAsync() == 1);
+                    }
+                }
+                catch
+                {
+                    throw new ApiException("Error when updating rooms, the database might be unavailable", System.Net.HttpStatusCode.InternalServerError);
+                }
             }
 
             return result;

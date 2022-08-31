@@ -9,6 +9,7 @@ namespace RoomReservationApi.Models
 {
     public class Room
     {
+        public Guid? ExternalId { get; set; }
         public string Name { get; set; }
         public bool Hide { get; set; }
         public List<ReservedTime> ReservedTimes { get; set; }
@@ -21,8 +22,9 @@ namespace RoomReservationApi.Models
 
         private string buildingName;
 
-        public Room(string name, string buildingName)
+        public Room(string name, string buildingName, Guid? id)
         {
+            ExternalId = id;
             Name = name;
             this.buildingName = buildingName;
             ReservedTimes = new List<ReservedTime>();

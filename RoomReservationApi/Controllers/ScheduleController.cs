@@ -29,14 +29,32 @@ namespace RoomReservationApi.Controllers
                 await roomManager.InitializeAsync(database);
                 roomManager.ApplySchedule(schedule);
 
-                IPAddress remoteAddress = Request.HttpContext.GetRemoteIPAddress().MapToIPv4();
-
-                //ViewManager viewManager = new ViewManager(database);
-                //await viewManager.RegisterView(remoteAddress);
-
                 return new ApiResponse(new { dayOffset, buildings = roomManager.Buildings });
             }
-            catch(ApiException exception)
+            catch (ApiException exception)
+            {
+                return new ApiResponse(exception);
+            }
+        }
+
+        [HttpPost("updateRoomIds")]
+        public async Task<ActionResult> UpdateRoomIds()
+        {
+            try
+            {
+                Schedule schedule = await ApiHelper.GetScheduleAsync(0);
+
+                DatabaseManager database = DatabaseManager.CreateFromEnvironmentVariables();
+
+                RoomManager roomManager = new RoomManager();
+                await roomManager.InitializeAsync(database);
+                roomManager.ApplySchedule(schedule);
+
+                bool updateResult = await database.UpdateDatabaseRooms(roomManager.Buildings.GetRooms());
+
+                return new ApiResponse(new { updateResult });
+            }
+            catch (ApiException exception)
             {
                 return new ApiResponse(exception);
             }
