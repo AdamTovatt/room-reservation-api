@@ -12,6 +12,7 @@ namespace RoomReservationApi.Models
         public Guid? ExternalId { get; set; }
         public string Name { get; set; }
         public bool Hide { get; set; }
+        public bool RequiresAccess { get; set; }
         public List<ReservedTime> ReservedTimes { get; set; }
 
         [JsonIgnore]
@@ -22,11 +23,12 @@ namespace RoomReservationApi.Models
 
         private string buildingName;
 
-        public Room(string name, string buildingName, Guid? id)
+        public Room(string name, string buildingName, Guid? id, bool requiresAccess)
         {
             ExternalId = id;
             Name = name;
             this.buildingName = buildingName;
+            RequiresAccess = requiresAccess;
             ReservedTimes = new List<ReservedTime>();
         }
 

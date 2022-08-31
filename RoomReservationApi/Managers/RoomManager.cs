@@ -98,7 +98,7 @@ namespace RoomReservationApi.Managers
                     }
                     else
                     {
-                        room = new Room(location.Name, buildingName, externalId);
+                        room = new Room(location.Name, buildingName, externalId, false); //we really don't know if the room requires special access but we'll set it to false
                         room.AddReservedTime(new ReservedTime(reservation));
 
                         building.AddRoom(room);
