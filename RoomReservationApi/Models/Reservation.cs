@@ -38,9 +38,6 @@ namespace RoomReservationApi.Models
         [JsonProperty("locations")]
         public List<Location> Locations { get; set; }
 
-        [JsonProperty("staffs")]
-        public List<Staff> Staff { get; set; }
-
         [JsonProperty("department", NullValueHandling = NullValueHandling.Ignore)]
         public Department Department { get; set; }
 

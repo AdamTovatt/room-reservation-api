@@ -59,27 +59,5 @@ namespace RoomReservationApi.Controllers
                 return new ApiResponse(exception);
             }
         }
-
-        /*
-        [HttpGet("searchStaff")]
-        public async Task<ActionResult> SearchStaff(string name, int dayRange)
-        {
-            Room searchResult = null;
-
-            for (int i = 0; i < dayRange; i++)
-            {
-                Schedule schedule = await ApiHelper.GetScheduleAsync(i);
-
-                RoomManager roomManager = new RoomManager(schedule);
-                roomManager.ApplySchedule(schedule);
-
-                searchResult = roomManager.SearchStaff(name);
-                if (searchResult != null)
-                    break;
-            }
-
-            return new ApiResponse(searchResult);
-        }
-        */
     }
 }

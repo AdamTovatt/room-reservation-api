@@ -38,15 +38,6 @@ namespace RoomReservationApi.Models
             Description = reservation.Description;
             Department = reservation.Department?.Name;
 
-            Staff = new List<string>();
-            if (reservation.Staff != null)
-            {
-                foreach (Staff staff in reservation.Staff)
-                {
-                    Staff.Add(staff.FullName);
-                }
-            }
-
             Programmes = new List<string>();
             if(reservation.Programmes != null)
             {
