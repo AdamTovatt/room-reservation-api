@@ -1,0 +1,22 @@
+name: Build on push
+
+on:
+  push:
+    branches: [master]
+  repository_dispatch:
+    types:
+      - publish
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - name: Trigger auto builder
+        uses: muinmomin/webhook-action@v1.0.0
+        with:
+          url: ${{ secrets.AUTOBUILDER_URL }}
