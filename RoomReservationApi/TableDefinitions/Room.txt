@@ -1,13 +1,14 @@
-﻿-- public."Room" definition
+﻿--public."Room" definition
 
--- Drop table
-
--- DROP TABLE public."Room";
+DROP TABLE "Room";
 
 CREATE TABLE public."Room" (
 	"Id" bigserial NOT NULL,
 	"Name" varchar(100) NOT NULL,
 	"BuildingId" int8 NOT NULL,
+	"Hide" bool NOT NULL DEFAULT false,
+	"ExternalId" UUID,
+	"RequiresAccess" bool NOT NULL DEFAULT false,
 	CONSTRAINT "Room_Name_key" UNIQUE ("Name"),
 	CONSTRAINT "Room_pkey" PRIMARY KEY ("Id")
 );
@@ -108,7 +109,7 @@ values
 ('V33', 10),
 ('V35', 10),
 ('D44', 3),
-('F4136-Sem', 22),
+('F4136-Sem', 5),
 ('H32', 7),
 ('H33', 7),
 ('B25', 5),
