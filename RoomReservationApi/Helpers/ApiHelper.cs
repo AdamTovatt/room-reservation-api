@@ -1,4 +1,5 @@
 ﻿using RoomReservationApi.Models;
+using Sakur.WebApiUtilities.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +31,22 @@ namespace RoomReservationApi.Helpers
 
             string url = string.Format("https://www.kth.se/api/timetable/v1/reservations/search?start={0}&end={1}", start.ToFormattedString(), end.ToFormattedString());
 
-            return Schedule.FromJson(await GetAsync(url));
+            try
+            {
+                string json = await GetAsync(url);
+
+                return Schedule.FromJson(json);
+            }
+            catch (WebException exception)
+            {
+                HttpWebResponse response = (HttpWebResponse)exception.Response;
+
+                throw new ApiException(new { scheduleResponseCode = response.StatusCode, scheduleResponseMessage = exception.Message }, HttpStatusCode.InternalServerError);
+            }
+            catch (Exception exception)
+            {
+                throw new ApiException(exception.Message, HttpStatusCode.InternalServerError);
+            }
         }
     }
 }
