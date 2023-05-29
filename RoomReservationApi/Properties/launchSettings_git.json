@@ -25,7 +25,8 @@
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DATABASE_URL": "url"
+        "DATABASE_URL": "url",
+        "KTH_API_KEY": "Ocp-Apim-Subscription-key"
       }
     }
   }

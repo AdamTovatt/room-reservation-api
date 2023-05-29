@@ -15,6 +15,7 @@ namespace RoomReservationApi.Helpers
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            request.Headers.Add("Ocp-Apim-Subscription-key", EnvironmentHelper.GetEnvironmentVariable("KTH_API_KEY"));
 
             using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
             using (Stream stream = response.GetResponseStream())
@@ -29,7 +30,7 @@ namespace RoomReservationApi.Helpers
             DateTime start = DateTime.Today + TimeSpan.FromDays(dayOffset);
             DateTime end = start + TimeSpan.FromHours(23);
 
-            string url = string.Format("https://www.kth.se/api/timetable/v1/reservations/search?start={0}&end={1}", start.ToFormattedString(), end.ToFormattedString());
+            string url = string.Format("https://integral-api.sys.kth.se/api/schema/v1/reservations/search?start={0}&end={1}", start.ToFormattedString(), end.ToFormattedString());
 
             try
             {
