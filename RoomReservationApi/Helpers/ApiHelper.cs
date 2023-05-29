@@ -46,6 +46,7 @@ namespace RoomReservationApi.Helpers
             }
             catch (Exception exception)
             {
+                throw;
                 throw new ApiException(exception.Message, HttpStatusCode.InternalServerError);
             }
         }
