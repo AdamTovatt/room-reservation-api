@@ -36,7 +36,7 @@ namespace RoomReservationApi.Controllers
                 Console.WriteLine(exception);
                 Console.WriteLine(exception.ErrorMessage ?? "");
                 Console.WriteLine(exception.ErrorObject ?? "");
-                return new ApiResponse(exception);
+                throw;
             }
         }
 
