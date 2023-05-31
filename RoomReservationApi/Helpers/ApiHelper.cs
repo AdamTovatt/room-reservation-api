@@ -11,11 +11,19 @@ namespace RoomReservationApi.Helpers
 {
     public class ApiHelper
     {
+        private static string apiKey = null;
+
+        public static void Initialize() // we have a separate initialize method that we call from the controller to be able to catch exceptions in a better way
+        {
+            if (apiKey == null)
+                EnvironmentHelper.GetEnvironmentVariable("KTH_API_KEY");
+        }
+
         public static async Task<string> GetAsync(string uri)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            request.Headers.Add("Ocp-Apim-Subscription-key", EnvironmentHelper.GetEnvironmentVariable("KTH_API_KEY"));
+            request.Headers.Add("Ocp-Apim-Subscription-key", apiKey);
 
             using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
             using (Stream stream = response.GetResponseStream())
@@ -46,7 +54,6 @@ namespace RoomReservationApi.Helpers
             }
             catch (Exception exception)
             {
-                throw;
                 throw new ApiException(exception.Message, HttpStatusCode.InternalServerError);
             }
         }

@@ -21,6 +21,7 @@ namespace RoomReservationApi.Controllers
         {
             try
             {
+                ApiHelper.Initialize(); // separate method so that we can catch the exception from it individually
                 Schedule schedule = await ApiHelper.GetScheduleAsync(dayOffset);
 
                 DatabaseManager database = DatabaseManager.CreateFromEnvironmentVariables();
@@ -33,11 +34,7 @@ namespace RoomReservationApi.Controllers
             }
             catch (ApiException exception)
             {
-                Console.WriteLine(exception);
-                Console.WriteLine(exception.ErrorMessage ?? "(no information on the error message)");
-                Console.WriteLine(exception.ErrorObject ?? "");
-                Console.WriteLine(exception.InnerException?.Message ?? "(No information on the inner exception)");
-                throw;
+                return new ApiResponse(exception);
             }
         }
 
