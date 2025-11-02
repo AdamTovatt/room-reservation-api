@@ -22,7 +22,6 @@ namespace RoomReservationApi.Helpers
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
             request.Headers.Add("Ocp-Apim-Subscription-key", apiKey);
-            request.Headers.Add("Accept-Encoding", "gzip, deflate");
 
             HttpResponseMessage response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();

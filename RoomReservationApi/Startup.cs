@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
@@ -35,13 +36,13 @@ namespace RoomReservationApi
 
             string apiKey = EnvironmentHelper.GetEnvironmentVariable("KTH_API_KEY");
 
-            services.AddHttpClient();
+            IHttpClientBuilder httpClientBuilder = services.AddHttpClient("ApiClient");
+            httpClientBuilder.ConfigurePrimaryHttpMessageHandler(serviceProvider => HttpClientHelper.CreateHandler());
 
             services.AddScoped<ApiService>(serviceProvider =>
             {
-                System.Net.Http.IHttpClientFactory httpClientFactory = serviceProvider.GetRequiredService<System.Net.Http.IHttpClientFactory>();
-                HttpClient httpClient = httpClientFactory.CreateClient();
-                httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate");
+                IHttpClientFactory httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+                HttpClient httpClient = httpClientFactory.CreateClient("ApiClient");
                 return new ApiService(httpClient, apiKey);
             });
         }
@@ -57,7 +58,7 @@ namespace RoomReservationApi
             // Patch path base with forwarded path
             app.Use(async (context, next) =>
             {
-                var forwardedPath = context.Request.Headers["X-Forwarded-Path"].FirstOrDefault();
+                string? forwardedPath = context.Request.Headers["X-Forwarded-Path"].FirstOrDefault();
                 if (!string.IsNullOrEmpty(forwardedPath))
                 {
                     context.Request.PathBase = forwardedPath;
