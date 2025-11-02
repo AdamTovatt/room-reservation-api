@@ -26,7 +26,6 @@ namespace RoomReservationApi.Helpers
                     Password = userInfo[1],
                     Database = databaseUri.LocalPath.TrimStart('/'),
                     SslMode = SslMode.Prefer,
-                    TrustServerCertificate = true
                 };
 
                 return builder.ToString();
