@@ -16,7 +16,7 @@ namespace RoomReservationApi.Helpers
         public static void Initialize() // we have a separate initialize method that we call from the controller to be able to catch exceptions in a better way
         {
             if (apiKey == null)
-                EnvironmentHelper.GetEnvironmentVariable("KTH_API_KEY");
+                apiKey = EnvironmentHelper.GetEnvironmentVariable("KTH_API_KEY");
         }
 
         public static async Task<string> GetAsync(string uri)
@@ -48,9 +48,12 @@ namespace RoomReservationApi.Helpers
             }
             catch (WebException exception)
             {
-                HttpWebResponse response = (HttpWebResponse)exception.Response;
+                HttpWebResponse? response = exception.Response as HttpWebResponse;
 
-                throw new ApiException(new { scheduleResponseCode = response.StatusCode, scheduleResponseMessage = exception.Message }, HttpStatusCode.InternalServerError);
+                if (response != null)
+                    throw new ApiException(new { scheduleResponseCode = response.StatusCode, scheduleResponseMessage = exception.Message }, HttpStatusCode.InternalServerError);
+                else
+                    throw new ApiException(new { scheduleResponseMessage = exception.Message }, HttpStatusCode.InternalServerError);
             }
             catch (Exception exception)
             {
