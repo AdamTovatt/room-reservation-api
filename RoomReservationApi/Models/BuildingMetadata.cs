@@ -8,6 +8,6 @@ namespace RoomReservationApi.Models
 {
     public class BuildingMetadata
     {
-        public GeoCoordinate Position { get; set; }
+        public GeoCoordinate? Position { get; set; }
     }
 }

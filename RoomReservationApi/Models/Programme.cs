@@ -9,15 +9,15 @@ namespace RoomReservationApi.Models
     public class Programme
     {
         [JsonProperty("code")]
-        public string Code { get; set; }
+        public string? Code { get; set; }
 
         [JsonProperty("year")]
         public long Year { get; set; }
 
         [JsonProperty("specialisation", NullValueHandling = NullValueHandling.Ignore)]
-        public string Specialisation { get; set; }
+        public string? Specialisation { get; set; }
 
         [JsonProperty("class", NullValueHandling = NullValueHandling.Ignore)]
-        public string Class { get; set; }
+        public string? Class { get; set; }
     }
 }

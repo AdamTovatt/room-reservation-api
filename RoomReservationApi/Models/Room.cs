@@ -16,7 +16,7 @@ namespace RoomReservationApi.Models
         public List<ReservedTime> ReservedTimes { get; set; }
 
         [JsonIgnore]
-        public Building Building { get; set; }
+        public Building? Building { get; set; }
 
         [JsonIgnore]
         public string BuildingName { get { if (!string.IsNullOrEmpty(buildingName)) return buildingName; return Name.ExtractBuildingName(); } }

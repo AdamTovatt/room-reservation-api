@@ -9,9 +9,9 @@ namespace RoomReservationApi.Models
     public class Department
     {
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [JsonProperty("code")]
-        public string Code { get; set; }
+        public string? Code { get; set; }
     }
 }

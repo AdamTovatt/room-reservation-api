@@ -14,7 +14,7 @@ namespace RoomReservationApi.Models
         public List<Room> Rooms { get; set; }
 
         [JsonIgnore]
-        public BuildingMetadata Metadata { get; set; }
+        public BuildingMetadata? Metadata { get; set; }
 
         public Building(string name)
         {
@@ -28,7 +28,7 @@ namespace RoomReservationApi.Models
             Rooms.Add(room);
         }
 
-        public void UpdateDistance(GeoCoordinate coordinate = null)
+        public void UpdateDistance(GeoCoordinate? coordinate = null)
         {
             if (coordinate == null)
                 coordinate = new GeoCoordinate(59.34691090376268, 18.072202439834772); //coordinates for KTH Entré

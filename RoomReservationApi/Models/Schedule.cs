@@ -9,7 +9,7 @@ namespace RoomReservationApi.Models
     public class Schedule
     {
         [JsonProperty("reservations")]
-        public List<Reservation> Reservations { get; set; }
+        public List<Reservation>? Reservations { get; set; }
 
         public static Schedule FromJson(string json)
         {

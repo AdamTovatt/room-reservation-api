@@ -9,12 +9,12 @@ namespace RoomReservationApi.Models
     public class Staff
     {
         [JsonProperty("kthId")]
-        public string KthId { get; set; }
+        public string? KthId { get; set; }
 
         [JsonProperty("fullName")]
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
 
         [JsonProperty("acronym")]
-        public string Acronym { get; set; }
+        public string? Acronym { get; set; }
     }
 }

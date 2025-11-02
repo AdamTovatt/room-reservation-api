@@ -16,13 +16,19 @@ namespace RoomReservationApi.Controllers
     [Route("schedule")]
     public class ScheduleController : Controller
     {
+        private readonly ApiService apiService;
+
+        public ScheduleController(ApiService apiService)
+        {
+            this.apiService = apiService;
+        }
+
         [HttpGet("get")]
         public async Task<ActionResult> GetSchedule(int dayOffset)
         {
             try
             {
-                ApiHelper.Initialize(); // separate method so that we can catch the exception from it individually
-                Schedule schedule = await ApiHelper.GetScheduleAsync(dayOffset);
+                Schedule schedule = await apiService.GetScheduleAsync(dayOffset);
 
                 DatabaseManager database = DatabaseManager.CreateFromEnvironmentVariables();
 
@@ -43,7 +49,7 @@ namespace RoomReservationApi.Controllers
         {
             try
             {
-                Schedule schedule = await ApiHelper.GetScheduleAsync(0);
+                Schedule schedule = await apiService.GetScheduleAsync(0);
 
                 DatabaseManager database = DatabaseManager.CreateFromEnvironmentVariables();
 

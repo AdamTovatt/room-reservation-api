@@ -9,7 +9,7 @@ namespace RoomReservationApi.Helpers
 {
     public class ApiHelper
     {
-        private static string apiKey = null;
+        private static string? apiKey = null;
 
         public static void Initialize() // we have a separate initialize method that we call from the controller to be able to catch exceptions in a better way
         {

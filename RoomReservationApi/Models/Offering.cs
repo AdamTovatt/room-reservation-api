@@ -10,13 +10,13 @@ namespace RoomReservationApi.Models
     public class Offering
     {
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [JsonProperty("course")]
-        public Course Course { get; set; }
+        public Course? Course { get; set; }
 
         [JsonProperty("semester")]
-        public string Semester { get; set; }
+        public string? Semester { get; set; }
 
         [JsonProperty("ladokId")]
         [JsonConverter(typeof(ParseStringConverter))]

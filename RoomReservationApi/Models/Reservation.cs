@@ -21,13 +21,13 @@ namespace RoomReservationApi.Models
         public DateTime End { get; set; }
 
         [JsonProperty("typename")]
-        public string Typename { get; set; }
+        public string? Typename { get; set; }
 
         [JsonProperty("typedesc")]
-        public string Typedesc { get; set; }
+        public string? Typedesc { get; set; }
 
         [JsonProperty("description", NullValueHandling = NullValueHandling.Ignore)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [JsonProperty("lastchanged")]
         public DateTime Lastchanged { get; set; }
@@ -36,24 +36,24 @@ namespace RoomReservationApi.Models
         public DateTime Lastrevised { get; set; }
 
         [JsonProperty("locations")]
-        public List<Location> Locations { get; set; }
+        public List<Location>? Locations { get; set; }
 
         [JsonProperty("department", NullValueHandling = NullValueHandling.Ignore)]
-        public Department Department { get; set; }
+        public Department? Department { get; set; }
 
         [JsonProperty("programmes")]
-        public List<Programme> Programmes { get; set; }
+        public List<Programme>? Programmes { get; set; }
 
         [JsonProperty("status")]
         public Status Status { get; set; }
 
         [JsonProperty("courses")]
-        public List<Course> Courses { get; set; }
+        public List<Course>? Courses { get; set; }
 
         [JsonProperty("offerings")]
-        public List<Offering> Offerings { get; set; }
+        public List<Offering>? Offerings { get; set; }
 
-        public static List<Reservation> FromJson(string json) => JsonConvert.DeserializeObject<List<Reservation>>(json, Converter.Settings);
+        public static List<Reservation>? FromJson(string json) => JsonConvert.DeserializeObject<List<Reservation>>(json, Converter.Settings);
     }
 
     public enum Status { Cancelled, Published };

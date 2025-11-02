@@ -13,18 +13,18 @@ namespace RoomReservationApi.Managers
     public class RoomManager
     {
         public bool AllowUnknownBuildings { get; set; }
-        public Dictionary<string, Building> BuildingsDictionary { get; set; }
-        public List<Building> Buildings { get { return BuildingsDictionary.Values.Where(x => !x.Rooms.All(r => r.Hide)).OrderByDescending(x => x.GetRelevance()).ToList().OrderBuildingRooms(); } }
-        public GeoCoordinate Location { get; private set; }
+        public Dictionary<string, Building>? BuildingsDictionary { get; set; }
+        public List<Building> Buildings { get { return BuildingsDictionary!.Values.Where(x => !x.Rooms.All(r => r.Hide)).OrderByDescending(x => x.GetRelevance()).ToList().OrderBuildingRooms(); } }
+        public GeoCoordinate? Location { get; private set; }
 
         private Dictionary<string, string> roomBuildings = new Dictionary<string, string>();
 
-        public RoomManager(GeoCoordinate location = null)
+        public RoomManager(GeoCoordinate? location = null)
         {
             Location = location;
         }
 
-        public async Task InitializeAsync(DatabaseManager database = null)
+        public async Task InitializeAsync(DatabaseManager? database = null)
         {
             if (database == null)
                 database = DatabaseManager.CreateFromEnvironmentVariables();
@@ -44,6 +44,9 @@ namespace RoomReservationApi.Managers
 
         private void AddRoom(Room room)
         {
+            if (BuildingsDictionary == null)
+                return;
+
             string buildingName = room.BuildingName;
 
             if (!BuildingsDictionary.ContainsKey(buildingName))
@@ -62,10 +65,19 @@ namespace RoomReservationApi.Managers
 
         public void ApplySchedule(Schedule schedule)
         {
+            if (BuildingsDictionary == null || schedule.Reservations == null)
+                return;
+
             foreach (Reservation reservation in schedule.Reservations)
             {
+                if (reservation.Locations == null)
+                    continue;
+
                 foreach (Location location in reservation.Locations)
                 {
+                    if (location.Name == null)
+                        continue;
+
                     string buildingName;
 
                     if (roomBuildings.ContainsKey(location.Name))
@@ -83,10 +95,10 @@ namespace RoomReservationApi.Managers
 
                     Building building = BuildingsDictionary[buildingName];
 
-                    Room room = building.Rooms.Where(x => x.Name == location.Name).FirstOrDefault();
+                    Room? room = building.Rooms.Where(x => x.Name == location.Name).FirstOrDefault();
 
                     Guid? externalId = null;
-                    if (Guid.TryParse(location.Id, out Guid parsedId))
+                    if (location.Id != null && Guid.TryParse(location.Id, out Guid parsedId))
                         externalId = parsedId;
 
                     if (room != null)

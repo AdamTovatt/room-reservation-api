@@ -10,10 +10,12 @@ namespace RoomReservationApi.Helpers
     {
         public override bool CanConvert(Type t) => t == typeof(long) || t == typeof(long?);
 
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type t, object? existingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<string>(reader);
+            string? value = serializer.Deserialize<string>(reader);
+            if (value == null)
+                return null;
             long l;
             if (Int64.TryParse(value, out l))
             {
@@ -22,7 +24,7 @@ namespace RoomReservationApi.Helpers
             throw new Exception("Cannot unmarshal type long");
         }
 
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? untypedValue, JsonSerializer serializer)
         {
             if (untypedValue == null)
             {

@@ -44,12 +44,16 @@ namespace RoomReservationApi.Managers
                     {
                         while (await reader.ReadAsync())
                         {
+                            string? name = reader["Name"] as string;
+                            if (name == null)
+                                continue;
+
                             BuildingMetadata metadata = new BuildingMetadata()
                             {
                                 Position = new GeoCoordinate((double)reader["Latitude"], (double)reader["Longitude"])
                             };
 
-                            Building building = new Building(reader["Name"] as string);
+                            Building building = new Building(name);
                             building.Metadata = metadata;
 
                             result.Add(building.Name, building);
@@ -82,7 +86,12 @@ namespace RoomReservationApi.Managers
                     {
                         while (await reader.ReadAsync())
                         {
-                            result.Add(new Room(reader["RoomName"] as string, reader["BuildingName"] as string, reader["ExternalId"] as Guid?, (bool)reader["RequiresAccess"]) { Hide = (bool)reader["Hide"] });
+                            string? roomName = reader["RoomName"] as string;
+                            string? buildingName = reader["BuildingName"] as string;
+                            if (roomName == null || buildingName == null)
+                                continue;
+
+                            result.Add(new Room(roomName, buildingName, reader["ExternalId"] as Guid?, (bool)reader["RequiresAccess"]) { Hide = (bool)reader["Hide"] });
                         }
                     }
                 }
@@ -148,13 +157,16 @@ namespace RoomReservationApi.Managers
                     {
                         while (await reader.ReadAsync())
                         {
+                            string? name = reader["Name"] as string;
+                            if (name == null)
+                                continue;
 
                             BuildingMetadata metadata = new BuildingMetadata()
                             {
                                 Position = new GeoCoordinate((double)reader["Latitude"], (double)reader["Longitude"])
                             };
 
-                            result.Add(reader["Name"] as string, metadata);
+                            result.Add(name, metadata);
                         }
                     }
                 }

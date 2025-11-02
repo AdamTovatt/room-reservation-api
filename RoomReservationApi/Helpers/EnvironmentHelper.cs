@@ -10,7 +10,7 @@ namespace RoomReservationApi.Helpers
     {
         public static string GetEnvironmentVariable(string environmentVariableName, int minLength = 0)
         {
-            string result = Environment.GetEnvironmentVariable(environmentVariableName);
+            string? result = Environment.GetEnvironmentVariable(environmentVariableName);
             if (result == null)
                 throw new ApiException(string.Format("No {0} in environment variables", environmentVariableName), System.Net.HttpStatusCode.InternalServerError);
             if (result.Length < minLength)

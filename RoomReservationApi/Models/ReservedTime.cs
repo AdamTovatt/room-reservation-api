@@ -11,12 +11,12 @@ namespace RoomReservationApi.Models
     {
         public DateTime Start { get; private set; }
         public DateTime End { get; private set; }
-        public string Description { get; set; }
-        public string Department { get; set; }
+        public string? Description { get; set; }
+        public string? Department { get; set; }
         public int OccupiedRooms { get; set; }
-        public string ReservationType { get; set; }
-        public List<string> Staff { get; set; }
-        public List<string> Programmes { get; set; }
+        public string? ReservationType { get; set; }
+        public List<string>? Staff { get; set; }
+        public List<string>? Programmes { get; set; }
 
         [JsonIgnore]
         public bool IsNow { get { return CacluateIsNow(); } }
@@ -43,11 +43,12 @@ namespace RoomReservationApi.Models
             {
                 foreach(Programme programme in reservation.Programmes)
                 {
-                    Programmes.Add(programme.Code);
+                    if (programme.Code != null)
+                        Programmes.Add(programme.Code);
                 }
             }
 
-            OccupiedRooms = reservation.Locations.Count;
+            OccupiedRooms = reservation.Locations?.Count ?? 0;
             ReservationType = reservation.Typedesc;
         }
 

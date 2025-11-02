@@ -8,9 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RoomReservationApi.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace RoomReservationApi
@@ -31,10 +33,17 @@ namespace RoomReservationApi
 
             services.AddControllers().AddNewtonsoftJson();
 
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "RoomReservationApi", Version = "v1" });
-            //});
+            string apiKey = EnvironmentHelper.GetEnvironmentVariable("KTH_API_KEY");
+
+            services.AddHttpClient();
+
+            services.AddScoped<ApiService>(serviceProvider =>
+            {
+                System.Net.Http.IHttpClientFactory httpClientFactory = serviceProvider.GetRequiredService<System.Net.Http.IHttpClientFactory>();
+                HttpClient httpClient = httpClientFactory.CreateClient();
+                httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate");
+                return new ApiService(httpClient, apiKey);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
