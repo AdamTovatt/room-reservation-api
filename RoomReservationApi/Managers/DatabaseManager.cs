@@ -186,7 +186,7 @@ namespace RoomReservationApi.Managers
                     }
                 }
             }
-            catch (Exception exception)
+            catch
             {
                 throw new ApiException("Error when getting room metadata, the database might be unavailable", System.Net.HttpStatusCode.InternalServerError);
             }
