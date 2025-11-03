@@ -44,7 +44,8 @@ namespace RoomReservationApi.Helpers
             }
             catch (HttpRequestException exception)
             {
-                throw new ApiException(new { scheduleResponseMessage = exception.Message }, HttpStatusCode.InternalServerError);
+                string fullMessage = exception.ToString(); // This includes inner exceptions
+                throw new ApiException(new { scheduleResponseMessage = fullMessage }, HttpStatusCode.InternalServerError);
             }
             catch (Exception exception)
             {
