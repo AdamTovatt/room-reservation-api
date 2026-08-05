@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Resolve version from tag
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          SHORT_SHA="${GITHUB_SHA::7}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "informational=$VERSION+$SHORT_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Publish for Linux ARM 64
+        run: |
+          cd RoomReservationApi
+          dotnet publish -c Release -r linux-arm64 --self-contained true \
+            "-p:Version=${{ steps.version.outputs.version }}" \
+            "-p:InformationalVersion=${{ steps.version.outputs.informational }}" \
+            -o ./publish/linux-arm64
+
+      - name: Create release archive
+        run: |
+          cd RoomReservationApi/publish/linux-arm64
+          zip -r ../../../room-reservation-api-linux-arm64.zip .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: room-reservation-api-linux-arm64.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
