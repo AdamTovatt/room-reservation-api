@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RoomReservationApi.Helpers;
+using RoomReservationApi.RateLimiting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,12 @@ namespace RoomReservationApi
 {
     public class Startup
     {
+        /// <summary>
+        /// How long a fetched schedule is served from memory before it is fetched again, which is also the
+        /// shortest possible interval between two outbound requests to the KTH api for the same day.
+        /// </summary>
+        private static readonly TimeSpan scheduleCacheLifetime = TimeSpan.FromMinutes(1);
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -34,16 +41,23 @@ namespace RoomReservationApi
 
             services.AddControllers().AddNewtonsoftJson();
 
+            services.AddRateLimitingServices();
+
             string apiKey = EnvironmentHelper.GetEnvironmentVariable("KTH_API_KEY");
 
             IHttpClientBuilder httpClientBuilder = services.AddHttpClient("ApiClient");
             httpClientBuilder.ConfigurePrimaryHttpMessageHandler(serviceProvider => HttpClientHelper.CreateHandler());
 
+            // The cache is shared by every request, so it has to be a singleton for it to have any effect.
+            services.AddSingleton<ScheduleCache>(serviceProvider => new ScheduleCache(scheduleCacheLifetime));
+
             services.AddScoped<ApiService>(serviceProvider =>
             {
                 IHttpClientFactory httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
                 HttpClient httpClient = httpClientFactory.CreateClient("ApiClient");
-                return new ApiService(httpClient, apiKey);
+                ScheduleCache scheduleCache = serviceProvider.GetRequiredService<ScheduleCache>();
+                ILogger<ApiService> logger = serviceProvider.GetRequiredService<ILogger<ApiService>>();
+                return new ApiService(httpClient, apiKey, scheduleCache, logger);
             });
         }
 
@@ -82,6 +96,8 @@ namespace RoomReservationApi
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseRateLimiter(); // after UseRouting, so the policy of the matched endpoint is known
 
             app.UseAuthorization();
 

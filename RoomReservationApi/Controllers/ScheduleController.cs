@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using RoomReservationApi.Helpers;
 using RoomReservationApi.Managers;
 using RoomReservationApi.Models;
+using RoomReservationApi.RateLimiting;
 using Sakur.WebApiUtilities.Models;
 using System.Threading.Tasks;
 
@@ -19,6 +21,7 @@ namespace RoomReservationApi.Controllers
         }
 
         [HttpGet("get")]
+        [EnableRateLimiting(RateLimitPolicies.Default)]
         public async Task<ActionResult> GetSchedule(int dayOffset)
         {
             try
@@ -40,6 +43,7 @@ namespace RoomReservationApi.Controllers
         }
 
         [HttpPost("updateRoomIds")]
+        [EnableRateLimiting(RateLimitPolicies.VeryStrict)]
         public async Task<ActionResult> UpdateRoomIds()
         {
             try

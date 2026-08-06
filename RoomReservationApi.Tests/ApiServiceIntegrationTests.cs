@@ -1,4 +1,5 @@
 using EasyReasy.EnvironmentVariables;
+using Microsoft.Extensions.Logging.Abstractions;
 using RoomReservationApi.Helpers;
 using RoomReservationApi.Models;
 
@@ -17,7 +18,10 @@ namespace RoomReservationApi.Tests
             string apiKey = EnvironmentVariables.KthApiKey.GetValue();
 
             HttpClient httpClient = HttpClientHelper.CreateClient();
-            apiService = new ApiService(httpClient, apiKey);
+            // Zero lifetime, so every test in here reaches the KTH api. This service is shared by the whole class,
+            // and a test that is quietly served a schedule another test already fetched proves nothing.
+            ScheduleCache scheduleCache = new ScheduleCache(TimeSpan.Zero);
+            apiService = new ApiService(httpClient, apiKey, scheduleCache, NullLogger<ApiService>.Instance);
         }
 
         [Fact]
